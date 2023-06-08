@@ -34,6 +34,8 @@ class HPO_explorer:
                 return (primary + secondary)[:limit]
 
             term = self.ont[term_id]
+            if term.obsolete:
+                continue
 
             # Check if all words in input are in the term name
             if all(word in term_name.lower() for word in words):
