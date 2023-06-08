@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>HPO Search</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div id="search-container">
+        <input
+          type="search"
+          id="search-input"
+          placeholder="Search symptom/sign..."
+        />
+        <div id="search-results-container">
+          <ul id="search-results"></ul>
+        </div>
+      </div>
+
+      <div id="selected-container">
+        <h2>Selected Symptoms/Signs:</h2>
+        <ul id="selected-symptoms"></ul>
+      </div>
+
+      <button id="analyze-button" type="button" disabled>Analyze</button>
+    </div>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+  </body>
+</html>
