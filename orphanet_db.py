@@ -1,90 +1,124 @@
 import sqlite3
 import xml.etree.ElementTree as ET
+from functools import lru_cache
 
 
-def create_tables(cursor: sqlite3.Cursor, conn: sqlite3.Connection) -> None:
-    # Create tables
-    cursor.execute(
-        """
-        CREATE TABLE disorders
-        (disorder_id INTEGER PRIMARY KEY, orpha_code TEXT, disorder_name TEXT)
-        """
-    )
+class orphanet_db:
+    conn = sqlite3.connect("orphanet.db", check_same_thread=False)
+    cursor = conn.cursor()
 
-    cursor.execute(
-        """
-        CREATE TABLE hpo_terms
-        (hpo_id TEXT PRIMARY KEY, hpo_term TEXT)
-        """
-    )
-
-    cursor.execute(
-        """
-        CREATE TABLE disorder_associations
-        (assoc_id INTEGER PRIMARY KEY, disorder_id INTEGER, hpo_id TEXT, frequency_name TEXT,
-        FOREIGN KEY(disorder_id) REFERENCES disorders(disorder_id),
-        FOREIGN KEY(hpo_id) REFERENCES hpo_terms(hpo_id))
-        """
-    )
-
-    conn.commit()
-
-
-def insert_data(cursor: sqlite3.Cursor, conn: sqlite3.Connection) -> None:
-    xml_data = open("en_product4.xml", "r").read()
-
-    root = ET.fromstring(xml_data)
-
-    for disorder in root.findall(".//Disorder"):
-        disorder_id = disorder.attrib.get("id")
-        orpha_code = disorder.find("OrphaCode").text
-        disorder_name = disorder.find("Name").text
-
-        # Insert data into the disorders table
-        cursor.execute(
-            "INSERT OR IGNORE INTO disorders VALUES (?, ?, ?)",
-            (disorder_id, orpha_code, disorder_name),
+    def create_tables(self) -> None:
+        # Create tables
+        self.cursor.execute(
+            """
+            CREATE TABLE disorders
+            (disorder_id INTEGER PRIMARY KEY, orpha_code TEXT, disorder_name TEXT)
+            """
         )
 
-        for association in disorder.findall(".//HPODisorderAssociation"):
-            assoc_id = association.attrib.get("id")
+        self.cursor.execute(
+            """
+            CREATE TABLE hpo_terms
+            (hpo_id TEXT PRIMARY KEY, hpo_term TEXT)
+            """
+        )
 
-            hpo_id = association.find("HPO/HPOId").text
-            hpo_term = association.find("HPO/HPOTerm").text
+        self.cursor.execute(
+            """
+            CREATE TABLE disorder_associations
+            (assoc_id INTEGER PRIMARY KEY, disorder_id INTEGER, hpo_id TEXT, frequency_name TEXT,
+            FOREIGN KEY(disorder_id) REFERENCES disorders(disorder_id),
+            FOREIGN KEY(hpo_id) REFERENCES hpo_terms(hpo_id))
+            """
+        )
 
-            frequency_name = association.find("HPOFrequency/Name").text
+        self.conn.commit()
 
-            # Insert data into the hpo_terms table
-            cursor.execute(
-                "INSERT OR IGNORE INTO hpo_terms VALUES (?, ?)", (hpo_id, hpo_term)
+    def insert_data(self) -> None:
+        xml_data = open("en_product4.xml", "r").read()
+
+        root = ET.fromstring(xml_data)
+
+        for disorder in root.findall(".//Disorder"):
+            disorder_id = disorder.attrib.get("id")
+            orpha_code = disorder.find("OrphaCode").text
+            disorder_name = disorder.find("Name").text
+
+            # Insert data into the disorders table
+            self.cursor.execute(
+                "INSERT OR IGNORE INTO disorders VALUES (?, ?, ?)",
+                (disorder_id, orpha_code, disorder_name),
             )
 
-            # Insert data into the disorder_associations table
-            cursor.execute(
-                "INSERT OR IGNORE INTO disorder_associations VALUES (?, ?, ?, ?)",
-                (assoc_id, disorder_id, hpo_id, frequency_name),
-            )
+            for association in disorder.findall(".//HPODisorderAssociation"):
+                assoc_id = association.attrib.get("id")
 
-    # Save (commit) the changes
-    conn.commit()
+                hpo_id = association.find("HPO/HPOId").text
+                hpo_term = association.find("HPO/HPOTerm").text
 
+                frequency_name = association.find("HPOFrequency/Name").text
 
-def xml_to_sqlite() -> None:
-    # Connect to the SQLite database (it will be created if it doesn't exist)
-    conn = sqlite3.connect("orphanet.db")
-    cursor = conn.cursor()
-    try:
-        create_tables(cursor, conn)
-    except sqlite3.OperationalError:
-        print("Tables already exist")
-        conn.close()
-        return
+                # Insert data into the hpo_terms table
+                self.cursor.execute(
+                    "INSERT OR IGNORE INTO hpo_terms VALUES (?, ?)", (hpo_id, hpo_term)
+                )
 
-    insert_data(cursor, conn)
+                # Insert data into the disorder_associations table
+                self.cursor.execute(
+                    "INSERT OR IGNORE INTO disorder_associations VALUES (?, ?, ?, ?)",
+                    (assoc_id, disorder_id, hpo_id, frequency_name),
+                )
 
-    # Close the connection when done
-    conn.close()
+        # Save (commit) the changes
+        self.conn.commit()
+
+    def create_orphanet_db(self) -> None:
+        try:
+            self.create_tables()
+        except sqlite3.OperationalError:
+            print("Tables already exist")
+            return
+
+        self.insert_data()
+
+    def get_disorders(self, hpo_ids: frozenset[str]) -> list:
+        if (
+            not hpo_ids
+            or len(hpo_ids) == 0
+            or (len(hpo_ids) == 1 and list(hpo_ids)[0] == "")
+        ):
+            return []
+
+        # Get all disorders with the given hpo_ids
+        insert = f"{','.join('?' * len(hpo_ids))}"
+
+        query = f"""
+            SELECT orpha_code, disorder_name, hpo_id, hpo_term, frequency_name
+            FROM disorders
+            JOIN disorder_associations
+            USING (disorder_id)
+            JOIN hpo_terms
+            USING (hpo_id)
+            WHERE hpo_id in ({insert})
+            ORDER BY disorder_id, hpo_id
+        """
+        self.cursor.execute(query, tuple(hpo_ids))
+
+        return self.cursor.fetchall()
 
 
 if __name__ == "__main__":
-    xml_to_sqlite()
+    o = orphanet_db()
+    o.create_orphanet_db()
+    disorders = o.get_disorders(
+        frozenset(
+            [
+                "HP:0000716",  # Depression
+                "HP:0000952",  # Jaundice
+                "HP:0001369",  # Arthritis
+                "HP:0002240",  # Hepatomegaly
+                "HP:0012115",  # Hepatitis
+            ]
+        )
+    )
+    pass
