@@ -1,4 +1,5 @@
 import pronto
+from functools import lru_cache
 
 
 class HPO_explorer:
@@ -17,7 +18,14 @@ class HPO_explorer:
             preprocessed_terms.append((term.id, term.name, full_desc))
         return preprocessed_terms
 
-    def find_terms(self, input, limit=None):
+    @lru_cache(maxsize=1024)
+    def find_terms(self, input, limit=None) -> list:
+        if input != str.strip(input):
+            return self.find_terms(str.strip(input), limit=limit)
+
+        if not input or len(input) < 3:
+            return []
+
         primary = []
         secondary = []
         words = input.lower().split()
@@ -28,25 +36,31 @@ class HPO_explorer:
             term = self.ont[term_id]
 
             # Check if all words in input are in the term name
-            if all(word in term_name for word in words):
+            if all(word in term_name.lower() for word in words):
                 primary.append((term_id, term_name))
             # Synonyms
             elif 0 < len(term.synonyms) and all(word in full_desc for word in words):
                 # The first synonym with the most words in common with the input
                 syn = max(
                     term.synonyms,
-                    key=lambda syn: sum(
-                        word in syn.description.lower() for word in words
-                    ),
+                    key=lambda syn: 0
+                    if syn.description == term_name
+                    else sum(word in syn.description.lower() for word in words),
                 )
                 secondary.append((term_id, term_name, syn.description))
         return (primary + secondary)[:limit]
 
-    def get_superterms(self, term_id: str, distance: int | None = None):
+    @lru_cache(maxsize=1024)
+    def get_superterms(self, term_id: str, distance: int | None = None) -> list:
+        if not term_id or term_id not in self.ont:
+            return []
+
         term: pronto.term.Term = self.ont[term_id]
         superterms = []
-        for superterm in term.superclasses(distance=distance, with_self=False):
+        results = term.superclasses(distance=distance, with_self=False)
+        for superterm in results:
             superterms.append((superterm.id, superterm.name))
+
         return superterms
 
 
