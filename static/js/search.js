@@ -66,6 +66,10 @@ const onClickListItem = async (event) => {
         }
         superterms.shift()
     }
+
+    document.getElementById('search-input').value = ''
+    document.getElementById('search-input').classList.remove('has-results')
+    document.getElementById('search-results').innerHTML = ''
 }
 
 const removeSelectedSymptom = (event) => {
