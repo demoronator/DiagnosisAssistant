@@ -1,38 +1,44 @@
-let controller = null // AbortController
+let debounceTimer = null // To prevent too many requests
+let controller = null // To cancel requests
 
-const onInput = async (event) => {
+const onInput = (event) => {
     const query = event.target.value
     if (query.length < 3) {
         document.getElementById('search-results').innerHTML = ''
         document.getElementById('search-input').classList.remove('has-results')
+        clearTimeout(debounceTimer)
         controller?.abort()
         return
     }
 
+    clearTimeout(debounceTimer)
     controller?.abort()
     controller = new AbortController()
 
-    fetch(`/search?q=${query}`, { signal: controller.signal }).then(response => response.json())
-        .then(data => {
-            document.getElementById('search-results').innerHTML = ''
-            for (let i = 0; i < data.length; i++) {
-                const li = document.createElement('li')
-                li.classList.add('result-item')
-                li.dataset.termid = data[i][0]
-                li.dataset.termname = data[i][1]
-                li.dataset.synonym = data[i][2]
-                li.innerText = data[i][1]
-                if (data[i][2] != null)
-                    li.innerText += ` (${data[i][2]})`
-                li.addEventListener('click', onClickListItem)
-                document.getElementById('search-results').append(li)
-            }
-            if (0 < data.length)
-                document.getElementById('search-input').classList.add('has-results')
+    debounceTimer = setTimeout(() => {
+        fetch(`/search?q=${query}`, { signal: controller.signal })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('search-results').innerHTML = ''
+                for (let i = 0; i < data.length; i++) {
+                    const li = document.createElement('li')
+                    li.classList.add('result-item')
+                    li.dataset.termid = data[i][0]
+                    li.dataset.termname = data[i][1]
+                    li.dataset.synonym = data[i][2]
+                    li.innerText = data[i][1]
+                    if (data[i][2] != null)
+                        li.innerText += ` (${data[i][2]})`
+                    li.addEventListener('click', onClickListItem)
+                    document.getElementById('search-results').append(li)
+                }
+                if (0 < data.length)
+                    document.getElementById('search-input').classList.add('has-results')
 
-            controller = null
-        })
-        .catch(console.log)
+                controller = null
+            })
+            .catch(console.log)
+    }, 300)
 }
 
 const onClickListItem = async (event) => {
