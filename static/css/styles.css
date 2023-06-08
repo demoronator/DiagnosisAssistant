@@ -5,6 +5,11 @@ body {
   overflow-x: hidden;
 }
 
+ul {
+  list-style-type: none;
+  padding-inline-start: 0;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -12,6 +17,33 @@ body {
   justify-content: flex-start;
   min-height: 100vh; /* make sure the body takes at least the full height of the viewport */
   padding-top: 200px;
+}
+
+#result-container {
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+
+#result-legend {
+  margin-bottom: -150px;
+  margin-left: 0;
+}
+
+th {
+  vertical-align: bottom;
+  text-align: center;
+}
+
+th span {
+  -ms-writing-mode: tb-rl;
+  -webkit-writing-mode: vertical-rl;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+}
+
+.sort-right {
+  text-align: right;
 }
 
 #search-input {
@@ -44,7 +76,6 @@ body {
   overflow-y: scroll;
   scrollbar-width: none; /* Hide scrollbar for Firefox */
   -ms-overflow-style: none; /* IE and Edge */
-  list-style-type: none;
 }
 
 #search-results::-webkit-scrollbar {
@@ -70,7 +101,6 @@ body {
   text-align: center;
   text-decoration: none;
   transition: background-color 0.3s ease;
-  list-style-type: none;
   cursor: pointer;
 }
 

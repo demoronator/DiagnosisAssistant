@@ -11,6 +11,13 @@ class orphanet_db:
         # Create tables
         self.cursor.execute(
             """
+            CREATE TABLE frequency
+            (frequency_id INTEGER PRIMARY KEY, frequency_name TEXT)
+            """
+        )
+
+        self.cursor.execute(
+            """
             CREATE TABLE disorders
             (disorder_id INTEGER PRIMARY KEY, orpha_code TEXT, disorder_name TEXT)
             """
@@ -25,16 +32,35 @@ class orphanet_db:
 
         self.cursor.execute(
             """
-            CREATE TABLE disorder_associations
-            (assoc_id INTEGER PRIMARY KEY, disorder_id INTEGER, hpo_id TEXT, frequency_name TEXT,
-            FOREIGN KEY(disorder_id) REFERENCES disorders(disorder_id),
-            FOREIGN KEY(hpo_id) REFERENCES hpo_terms(hpo_id))
+            CREATE TABLE disorder_associations (
+                assoc_id INTEGER PRIMARY KEY,
+                disorder_id INTEGER,
+                hpo_id TEXT,
+                frequency_id INTEGER,
+                FOREIGN KEY(disorder_id) REFERENCES disorders(disorder_id),
+                FOREIGN KEY(hpo_id) REFERENCES hpo_terms(hpo_id),
+                FOREIGN KEY(frequency_id) REFERENCES frequency(frequency_id)
+            )
             """
         )
 
         self.conn.commit()
 
     def insert_data(self) -> None:
+        # Insert data into the frequency table
+        frequency_names = [
+            "Excluded (0%)",
+            "Very rare (<4-1%)",
+            "Occasional (29-5%)",
+            "Frequent (79-30%)",
+            "Very frequent (99-80%)",
+            "Obligate (100%)",
+        ]
+        for i, name in enumerate(frequency_names):
+            self.cursor.execute(
+                "INSERT OR IGNORE INTO frequency VALUES (?, ?)", (i + 1, name)
+            )
+
         xml_data = open("en_product4.xml", "r").read()
 
         root = ET.fromstring(xml_data)
@@ -52,11 +78,10 @@ class orphanet_db:
 
             for association in disorder.findall(".//HPODisorderAssociation"):
                 assoc_id = association.attrib.get("id")
-
                 hpo_id = association.find("HPO/HPOId").text
                 hpo_term = association.find("HPO/HPOTerm").text
-
                 frequency_name = association.find("HPOFrequency/Name").text
+                frequency_id = frequency_names.index(frequency_name) + 1
 
                 # Insert data into the hpo_terms table
                 self.cursor.execute(
@@ -66,7 +91,7 @@ class orphanet_db:
                 # Insert data into the disorder_associations table
                 self.cursor.execute(
                     "INSERT OR IGNORE INTO disorder_associations VALUES (?, ?, ?, ?)",
-                    (assoc_id, disorder_id, hpo_id, frequency_name),
+                    (assoc_id, disorder_id, hpo_id, frequency_id),
                 )
 
         # Save (commit) the changes
@@ -75,8 +100,8 @@ class orphanet_db:
     def create_orphanet_db(self) -> None:
         try:
             self.create_tables()
-        except sqlite3.OperationalError:
-            print("Tables already exist")
+        except sqlite3.Error as e:
+            print(" ".join(e.args))
             return
 
         self.insert_data()
@@ -93,13 +118,15 @@ class orphanet_db:
         insert = f"{','.join('?' * len(hpo_ids))}"
 
         query = f"""
-            SELECT orpha_code, disorder_name, hpo_id, hpo_term, frequency_name
+            SELECT orpha_code, disorder_name, hpo_id, hpo_term, frequency_id
             FROM disorders
             JOIN disorder_associations
             USING (disorder_id)
             JOIN hpo_terms
             USING (hpo_id)
-            WHERE hpo_id in ({insert})
+            JOIN frequency
+            USING (frequency_id)
+            WHERE hpo_id in ({insert}) AND frequency_id != 1
             ORDER BY disorder_id, hpo_id
         """
         self.cursor.execute(query, tuple(hpo_ids))

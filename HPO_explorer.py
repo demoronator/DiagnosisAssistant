@@ -50,6 +50,7 @@ class HPO_explorer:
                     else sum(word in syn.description.lower() for word in words),
                 )
                 secondary.append((term_id, term_name, syn.description))
+
         return (primary + secondary)[:limit]
 
     @lru_cache(maxsize=1024)

@@ -90,6 +90,7 @@ const addSelectedSymptom = (termId, termName) => {
     const listItem = document.createElement('li')
     listItem.classList.add('selected-symptom')
     listItem.dataset.termid = termId
+    listItem.dataset.termname = termName
     listItem.innerText = '➕ ' + termName
     listItem.onclick = removeSelectedSymptom
     const parent = document.querySelector('#selected-symptoms')
@@ -103,4 +104,84 @@ const updateAnalyzeButton = () => {
     button.disabled = li.length == 0
 }
 
+const onClickAnalyzeButton = async () => {
+    const li = document.querySelectorAll('#selected-symptoms li')
+    const termIds = []
+    for (let i = 0; i < li.length; i++) {
+        termIds.push(li[i].dataset.termid)
+    }
+
+    fetch('/disorders?hpo_ids=' + termIds.join(','))
+        .then(response => response.json())
+        .then(data => {
+            const top = Object.keys(data).sort((a, b) =>
+                data[b].reduce((c, d) => c + d[2], 0) - data[a].reduce((c, d) => c + d[2], 0)
+            ).slice(0, 10)
+            top.forEach((key) => {
+                console.log(key, data[key].length)
+            })
+
+            // Draw table
+            const table = document.getElementById('result-table')
+            {
+                table.innerHTML = ''
+                const thead = document.createElement('thead')
+                const tr = document.createElement('tr')
+                const th1 = document.createElement('th')
+                tr.append(th1)
+                for (let i = 0; i < top.length; i++) {
+                    const th = document.createElement('th')
+                    const span = document.createElement('span')
+                    span.innerText = top[i]
+                    th.append(span)
+                    tr.append(th)
+                }
+                thead.append(tr)
+                table.append(thead)
+            }
+
+            const tbody = document.createElement('tbody')
+            for (let i = 0; i < termIds.length; i++) {
+                const tr = document.createElement('tr')
+                const td1 = document.createElement('td')
+                td1.innerText = `${termIds[i]} ${li[i].dataset.termname}`
+                td1.classList.add('sort-right')
+                tr.append(td1)
+
+                for (let j = 0; j < top.length; j++) {
+                    const td = document.createElement('td')
+                    ids = data[top[j]].map((x) => x[0])
+
+                    if (!ids.includes(termIds[i])) {
+                        td.innerText = ''
+                        tr.append(td)
+                        continue
+                    }
+
+                    const frequency = data[top[j]].filter((x) => x[0] == termIds[i])[0][2]
+
+                    if (frequency == 1) // Excluded (0%)
+                        td.innerText = '🚫'
+                    else if (frequency == 2) // Very rare (<4-1%)
+                        td.innerText = '🟫'
+                    else if (frequency == 3) // Occasional (29-5%)
+                        td.innerText = '🟧'
+                    else if (frequency == 4) // Frequent (79-30%)
+                        td.innerText = '🟨'
+                    else if (frequency == 5) // Very frequent (99-80%)
+                        td.innerText = '🟩'
+                    else if (frequency == 6) // Obligate (100%)
+                        td.innerText = '✅'
+                    tr.append(td)
+                }
+                tbody.append(tr)
+            }
+            table.append(tbody)
+
+            document.getElementById('result-container').removeAttribute('hidden')
+        })
+        .catch(console.log)
+}
+
 document.getElementById('search-input').addEventListener('input', onInput)
+document.getElementById('analyze-button').addEventListener('click', onClickAnalyzeButton)

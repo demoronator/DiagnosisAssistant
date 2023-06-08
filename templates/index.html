@@ -29,6 +29,20 @@
       </div>
 
       <button id="analyze-button" type="button" disabled>Analyze</button>
+
+      <div id="result-container" hidden>
+        <div id="result-legend">
+          <h3>Legend</h3>
+          <ul>
+            <li>✅ Obligate (100%)</li>
+            <li>🟩 Very frequent (99-80%)</li>
+            <li>🟨 Frequent (79-30%)</li>
+            <li>🟧 Occasional (29-5%)</li>
+            <li>🟫 Very rare (&lt;4-1%)</li>
+            <li>🚫 Excluded (0%)</li>
+          </ul>
+        </div>
+        <table id="result-table"></table>
     </div>
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
   </body>
