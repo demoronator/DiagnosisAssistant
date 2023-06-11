@@ -29,6 +29,10 @@ ul {
   margin-left: 0;
 }
 
+table {
+  border-spacing: 1px;
+}
+
 th {
   vertical-align: bottom;
   text-align: center;
@@ -40,6 +44,11 @@ th span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   white-space: nowrap;
+}
+
+tbody tr td {
+  border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee;
 }
 
 .sort-right {

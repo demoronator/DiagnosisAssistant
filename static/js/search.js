@@ -128,6 +128,7 @@ const onClickAnalyzeButton = async () => {
                 tr.append(th1)
                 for (let i = 0; i < keys.length; i++) {
                     const th = document.createElement('th')
+                    th.scope = 'col'
                     const span = document.createElement('span')
                     span.innerText = keys[i]
                     th.append(span)
@@ -140,10 +141,11 @@ const onClickAnalyzeButton = async () => {
             const tbody = document.createElement('tbody')
             for (let i = 0; i < termIds.length; i++) {
                 const tr = document.createElement('tr')
-                const td1 = document.createElement('td')
-                td1.innerText = `${termIds[i]} ${li[i].dataset.termname}`
-                td1.classList.add('sort-right')
-                tr.append(td1)
+                const th = document.createElement('th')
+                th.scope = 'row'
+                th.innerText = `${termIds[i]} ${li[i].dataset.termname}`
+                th.classList.add('sort-right')
+                tr.append(th)
 
                 for (let j = 0; j < keys.length; j++) {
                     const td = document.createElement('td')
