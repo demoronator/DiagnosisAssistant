@@ -114,12 +114,9 @@ const onClickAnalyzeButton = async () => {
     fetch('/disorders?hpo_ids=' + termIds.join(','))
         .then(response => response.json())
         .then(data => {
-            const top = Object.keys(data).sort((a, b) =>
+            const keys = Object.keys(data).sort((a, b) =>
                 data[b].reduce((c, d) => c + d[2], 0) - data[a].reduce((c, d) => c + d[2], 0)
-            ).slice(0, 10)
-            top.forEach((key) => {
-                console.log(key, data[key].length)
-            })
+            )
 
             // Draw table
             const table = document.getElementById('result-table')
@@ -129,10 +126,10 @@ const onClickAnalyzeButton = async () => {
                 const tr = document.createElement('tr')
                 const th1 = document.createElement('th')
                 tr.append(th1)
-                for (let i = 0; i < top.length; i++) {
+                for (let i = 0; i < keys.length; i++) {
                     const th = document.createElement('th')
                     const span = document.createElement('span')
-                    span.innerText = top[i]
+                    span.innerText = keys[i]
                     th.append(span)
                     tr.append(th)
                 }
@@ -148,9 +145,9 @@ const onClickAnalyzeButton = async () => {
                 td1.classList.add('sort-right')
                 tr.append(td1)
 
-                for (let j = 0; j < top.length; j++) {
+                for (let j = 0; j < keys.length; j++) {
                     const td = document.createElement('td')
-                    ids = data[top[j]].map((x) => x[0])
+                    ids = data[keys[j]].map((x) => x[0])
 
                     if (!ids.includes(termIds[i])) {
                         td.innerText = ''
@@ -158,7 +155,7 @@ const onClickAnalyzeButton = async () => {
                         continue
                     }
 
-                    const frequency = data[top[j]].filter((x) => x[0] == termIds[i])[0][2]
+                    const frequency = data[keys[j]].filter((x) => x[0] == termIds[i])[0][2]
 
                     if (frequency == 1) // Excluded (0%)
                         td.innerText = '🚫'

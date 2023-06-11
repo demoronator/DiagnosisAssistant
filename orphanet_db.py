@@ -119,13 +119,10 @@ class orphanet_db:
 
         query = f"""
             SELECT orpha_code, disorder_name, hpo_id, hpo_term, frequency_id
-            FROM disorders
-            JOIN disorder_associations
-            USING (disorder_id)
-            JOIN hpo_terms
-            USING (hpo_id)
-            JOIN frequency
-            USING (frequency_id)
+            FROM disorder_associations
+            JOIN disorders USING (disorder_id)
+            JOIN hpo_terms USING (hpo_id)
+            JOIN frequency USING (frequency_id)
             WHERE hpo_id in ({insert}) AND frequency_id != 1
             ORDER BY disorder_id, hpo_id
         """
