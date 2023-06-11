@@ -116,7 +116,7 @@ const onClickAnalyzeButton = async () => {
         .then(data => {
             const keys = Object.keys(data).sort((a, b) =>
                 data[b].reduce((c, d) => c + d[2], 0) - data[a].reduce((c, d) => c + d[2], 0)
-            )
+            ).slice(0, 30)
 
             // Draw table
             const table = document.getElementById('result-table')

@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   background: white;
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 
 ul {
