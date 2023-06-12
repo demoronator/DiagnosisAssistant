@@ -7,8 +7,8 @@ Diagnosing rare diseases presents significant challenges due to their unique and
 ## Keywords
 Diagnosis, Rare diseases, Symptom, Sign, Pathognomonic sign
 
-## Full text
+## Full Text
 Full text is available on [Link](https://drive.google.com/file/d/1mxXw-jE_B7uwObzsk1c88Obkwvcxxts0/view?usp=drive_link)
 
-## Web-app
+## Web App
 Web app is available on [Diagnosis Assistant](https://diagnosis-assistant-app.uw.r.appspot.com/)
