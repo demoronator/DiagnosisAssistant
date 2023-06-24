@@ -17,12 +17,12 @@ Web app is available on [Diagnosis Assistant](https://diagnosis-assistant-app.uw
 <figure class="image">
   <img width="700" alt="yellow skin" src="https://github.com/demoronator/Diagnosis-Assistant/assets/6217816/548c9fbc-faa5-4fc9-a909-284ce48bc47f">
   <br>
-  <figcaption>User can list every symptom/signs which involves skin yellowing</figcaption>
+  <figcaption>User can list every symptom/sign which involves skin yellowing</figcaption>
 </figure>
 <br>
 
 <figure class="image">
   <img width="700" alt="searching" src="https://github.com/demoronator/Diagnosis-Assistant/assets/6217816/f6fc4f2f-820c-4c50-9ade-f2101e5bba61">
   <br>
-  <figcaption>Result of searching with the symptoms and signs from the case report</figcaption>
+  <figcaption>Result of searching with the symptoms and signs from a case report</figcaption>
 </figure>
