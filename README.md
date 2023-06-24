@@ -8,16 +8,16 @@ Diagnosing rare diseases presents significant challenges due to their unique and
 Diagnosis, Rare diseases, Symptom, Sign, Pathognomonic sign
 
 ## Full Text
-Full text of the paper is available on [Link](https://drive.google.com/file/d/1mxXw-jE_B7uwObzsk1c88Obkwvcxxts0/view?usp=drive_link)
+The full text of the paper is available on [Link](https://drive.google.com/file/d/1mxXw-jE_B7uwObzsk1c88Obkwvcxxts0/view?usp=drive_link)
 
 ## Web App
-Web app is available on [Diagnosis Assistant](https://diagnosis-assistant-app.uw.r.appspot.com/)
+The web app is available on [Diagnosis Assistant](https://diagnosis-assistant-app.uw.r.appspot.com/)
 
 ## Screenshots
 <figure class="image">
   <img width="700" alt="yellow skin" src="https://github.com/demoronator/Diagnosis-Assistant/assets/6217816/548c9fbc-faa5-4fc9-a909-284ce48bc47f">
   <br>
-  <figcaption>User can list every symptom/sign which involves skin yellowing</figcaption>
+  <figcaption>User can list every symptom and sign which involve skin yellowing</figcaption>
 </figure>
 <br>
 
