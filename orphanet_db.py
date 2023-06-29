@@ -1,6 +1,5 @@
 import sqlite3
 import xml.etree.ElementTree as ET
-from functools import lru_cache
 
 
 class orphanet_db:
@@ -8,31 +7,30 @@ class orphanet_db:
     cursor = conn.cursor()
 
     def create_tables(self) -> None:
-        # Create tables
         self.cursor.execute(
             """
-            CREATE TABLE frequency
+            CREATE TABLE IF NOT EXISTS frequency
             (frequency_id INTEGER PRIMARY KEY, frequency_name TEXT)
             """
         )
 
         self.cursor.execute(
             """
-            CREATE TABLE disorders
+            CREATE TABLE IF NOT EXISTS disorders
             (disorder_id INTEGER PRIMARY KEY, orpha_code TEXT, disorder_name TEXT)
             """
         )
 
         self.cursor.execute(
             """
-            CREATE TABLE hpo_terms
+            CREATE TABLE IF NOT EXISTS hpo_terms
             (hpo_id TEXT PRIMARY KEY, hpo_term TEXT)
             """
         )
 
         self.cursor.execute(
             """
-            CREATE TABLE disorder_associations (
+            CREATE TABLE IF NOT EXISTS disorder_associations (
                 assoc_id INTEGER PRIMARY KEY,
                 disorder_id INTEGER,
                 hpo_id TEXT,
@@ -41,6 +39,16 @@ class orphanet_db:
                 FOREIGN KEY(hpo_id) REFERENCES hpo_terms(hpo_id),
                 FOREIGN KEY(frequency_id) REFERENCES frequency(frequency_id)
             )
+            """
+        )
+
+        self.conn.commit()
+
+    def create_indices(self) -> None:
+        self.cursor.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_disorder_associations_hpo_id
+                ON disorder_associations (hpo_id)
             """
         )
 
@@ -100,6 +108,7 @@ class orphanet_db:
     def create_orphanet_db(self) -> None:
         try:
             self.create_tables()
+            self.create_indices()
         except sqlite3.Error as e:
             print(" ".join(e.args))
             return
@@ -119,11 +128,15 @@ class orphanet_db:
 
         query = f"""
             SELECT orpha_code, disorder_name, hpo_id, hpo_term, frequency_id
-            FROM disorder_associations
+            FROM (
+                SELECT *
+                FROM disorder_associations
+                WHERE hpo_id in ({insert})
+                AND frequency_id != 1
+            ) AS filtered_associations
             JOIN disorders USING (disorder_id)
             JOIN hpo_terms USING (hpo_id)
             JOIN frequency USING (frequency_id)
-            WHERE hpo_id in ({insert}) AND frequency_id != 1
             ORDER BY disorder_id, hpo_id
         """
         self.cursor.execute(query, tuple(hpo_ids))
