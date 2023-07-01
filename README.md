@@ -31,12 +31,12 @@ The web app is available on [Diagnosis Assistant](https://diagnosis-assistant-ap
 <figure class="image">
   <img width="700" alt="yellow skin" src="https://github.com/demoronator/Diagnosis-Assistant/assets/6217816/548c9fbc-faa5-4fc9-a909-284ce48bc47f">
   <br>
-  <figcaption>User can list every symptom and sign which involve skin yellowing</figcaption>
+  <figcaption>User can list every symptom and sign which involve skin yellowing.</figcaption>
 </figure>
-<br>
+<br><br>
 
 <figure class="image">
-  <img width="700" alt="searching" src="https://github.com/demoronator/Diagnosis-Assistant/assets/6217816/f6fc4f2f-820c-4c50-9ade-f2101e5bba61">
+  <img width="760" alt="searching" src="https://github.com/demoronator/Diagnosis-Assistant/assets/6217816/5cdfcc57-9d46-490e-a14b-83263f131dcc">
   <br>
-  <figcaption>Result of searching with the symptoms and signs from a case report</figcaption>
+  <figcaption>Result of searching with the symptoms and signs from a case report.</figcaption>
 </figure>
