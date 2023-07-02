@@ -48,14 +48,14 @@ class HPO_explorer:
 
                 l = []
                 for syn in term.synonyms:
-                    l.append(syn.description.lower())
-                l.append(str(term.definition).lower())
+                    l.append(syn.description)
+                l.append(str(term.definition))
 
                 syn = max(
                     l,
                     key=lambda s: 0
                     if s == term_name
-                    else sum(word in s for word in words),
+                    else sum(word in s.lower() for word in words),
                 )
                 secondary.append((term_id, term_name, syn))
 
