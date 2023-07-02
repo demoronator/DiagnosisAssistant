@@ -11,9 +11,11 @@ class HPO_explorer:
         preprocessed_terms = []
         for term in self.ont.terms():
             full_desc = (
-                term.name.lower()
+                str(term.name).lower()
                 + " "
                 + " ".join(syn.description.lower() for syn in term.synonyms)
+                + " "
+                + str(term.definition).lower()
             )
             preprocessed_terms.append((term.id, term.name, full_desc))
         return preprocessed_terms
@@ -40,16 +42,22 @@ class HPO_explorer:
             # Check if all words in input are in the term name
             if all(word in term_name.lower() for word in words):
                 primary.append((term_id, term_name))
-            # Synonyms
+            # Check synonyms
             elif 0 < len(term.synonyms) and all(word in full_desc for word in words):
-                # The first synonym with the most words in common with the input
+                # The first synonym or definition with the most words in common with the input
+
+                l = []
+                for syn in term.synonyms:
+                    l.append(syn.description.lower())
+                l.append(str(term.definition).lower())
+
                 syn = max(
-                    term.synonyms,
-                    key=lambda syn: 0
-                    if syn.description == term_name
-                    else sum(word in syn.description.lower() for word in words),
+                    l,
+                    key=lambda s: 0
+                    if s == term_name
+                    else sum(word in s for word in words),
                 )
-                secondary.append((term_id, term_name, syn.description))
+                secondary.append((term_id, term_name, syn))
 
         return (primary + secondary)[:limit]
 
