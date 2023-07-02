@@ -74,9 +74,25 @@ class HPO_explorer:
 
         return superterms
 
+    def create_json_file(self):
+        import json
+
+        with open("hp.json", "w") as f:
+            # The JSON file should contain only HPO_ID, name, definition, and synonyms
+            d = {}
+            for term in self.ont.terms():
+                d[term.id] = {
+                    "name": term.name,
+                    "definition": str(term.definition),
+                    "synonyms": [syn.description for syn in term.synonyms],
+                }
+            json.dump(d, f, indent=2)
+
 
 if __name__ == "__main__":
     hpo = HPO_explorer("hp.obo")
+
+    hpo.create_json_file()
 
     # Test the function with an example term
     print(hpo.find_terms("Weight", limit=15), "\n")
