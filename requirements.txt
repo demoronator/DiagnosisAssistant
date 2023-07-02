@@ -1,3 +1,5 @@
 flask==2.*
 pronto==2.*
 waitress==2.*
+torch=2.*
+transformers==4.*
