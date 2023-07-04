@@ -88,11 +88,27 @@ class HPO_explorer:
                 }
             json.dump(d, f, indent=2)
 
+    def create_jsonl_file(self):
+        with open("hp.jsonl", "w") as f:
+            l = []
+            t = list(self.ont.terms())[1:]  # Skip the root term
+            for term in t:
+                l.append(f'{{"prompt": "{term.name}", "completion": "{term.id}"}}')
+                # l.append(
+                #     f'{{"prompt": "{term.definition}", "completion": "{term.id}"}}'
+                # )
+                # for syn in term.synonyms:
+                #     l.append(
+                #         f'{{"prompt": "{syn.description}", "completion": "{term.id}"}}'
+                #     )
+            f.write("\n".join(l))
+
 
 if __name__ == "__main__":
     hpo = HPO_explorer("hp.obo")
 
     hpo.create_json_file()
+    hpo.create_jsonl_file()
 
     # Test the function with an example term
     print(hpo.find_terms("Weight", limit=15), "\n")
