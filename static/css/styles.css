@@ -74,6 +74,7 @@ table {
 th {
   vertical-align: bottom;
   text-align: center;
+  max-width: 250px;
 }
 
 th span {
