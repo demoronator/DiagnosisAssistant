@@ -8,6 +8,7 @@ from waitress import serve
 app = Flask(__name__)
 hpo = HPO_explorer.HPO_explorer("hp.obo")
 o = orphanet_db.orphanet_db()
+key_pt = open("phenotagger.key", "r").read().strip()
 
 
 @app.route("/")
@@ -53,7 +54,9 @@ def biotag():
     host = "https://phenotagger-dot-diagnosis-assistant-app.uw.r.appspot.com"
 
     try:
-        response = requests.post(f"{host}/biotag", json=data)
+        response = requests.post(
+            f"{host}/biotag", json=data, headers={"Authorization": f"Bearer {key_pt}"}
+        )
         terms = response.json()
 
     except Exception as e:
