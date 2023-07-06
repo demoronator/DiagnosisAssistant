@@ -182,5 +182,38 @@ const onClickAnalyzeButton = async () => {
         .catch(console.log)
 }
 
+const onSubmitPhenoTagger = async (event) => {
+    event.preventDefault()
+
+    const text = event.target[0].value
+    const body = {
+        'para_overlap': 'true',
+        'para_abbr': 'true',
+        'para_threshold': '0.95',
+        'doc': text
+    }
+
+    // Show spinner
+    document.getElementById('spinner').classList.remove('hidden')
+
+    const response = await fetch('/biotag', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).catch(console.log)
+        .then(response => response.json())
+        .then(data => {
+            for (let i = 0; i < data.length; i++) {
+                addSelectedSymptom(data[i][0], data[i][1])
+            }
+        })
+
+    // Hide spinner
+    document.getElementById('spinner').classList.add('hidden')
+}
+
 document.getElementById('search-input').addEventListener('input', onInput)
+document.getElementById('paragraph-form').addEventListener('submit', onSubmitPhenoTagger)
 document.getElementById('analyze-button').addEventListener('click', onClickAnalyzeButton)

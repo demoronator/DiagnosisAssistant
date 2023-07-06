@@ -28,7 +28,21 @@
         <ul id="selected-symptoms"></ul>
       </div>
 
-      <button id="analyze-button" type="button" disabled>Analyze</button>
+      <form id="paragraph-form">
+        <legend>Or, find from plain text</legend>
+        <textarea
+          id="paragraph-input"
+          placeholder="Paste your text here..."
+        ></textarea>
+        <div>
+          <button id="phenotagger-button" type="submit">
+            Find Symptoms/Signs
+          </button>
+        </div>
+      </form>
+      <button id="analyze-button" type="button" disabled>
+        List possible diseases
+      </button>
 
       <div id="result-container" hidden>
         <div id="result-legend">
@@ -43,7 +57,15 @@
           </ul>
         </div>
         <table id="result-table"></table>
+      </div>
     </div>
+
+    <div class="spinner-container hidden" id="spinner">
+      <div class="spinner-border" role="status">
+        <span class="sr-only"></span>
+      </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
   </body>
 </html>

@@ -74,6 +74,13 @@ class HPO_explorer:
 
         return superterms
 
+    def get_termname(self, term_id: str) -> str:
+        if not term_id or term_id not in self.ont:
+            return ""
+
+        name = str(self.ont[term_id].name)
+        return name
+
     def create_json_file(self):
         import json
 

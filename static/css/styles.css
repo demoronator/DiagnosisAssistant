@@ -10,6 +10,31 @@ ul {
   padding-inline-start: 0;
 }
 
+textarea {
+  resize: none;
+  width: 400px;
+  height: 200px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: #eee solid 1px;
+  padding: 5px;
+  margin: 5px;
+}
+
+textarea {
+  margin: 5px;
+  border: #eee solid 1px;
+}
+
+.hidden {
+  display: none !important;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -17,6 +42,13 @@ ul {
   justify-content: flex-start;
   min-height: 100vh; /* make sure the body takes at least the full height of the viewport */
   padding-top: 200px;
+}
+
+.div-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 #result-container {
@@ -120,4 +152,34 @@ tbody tr td {
 
 .result-item:hover {
   background-color: #f0f0f0;
+}
+
+.spinner-container {
+  position: fixed; /* Fixed positioning */
+  z-index: 9999; /* Make it appear on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+.spinner-border {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
 }

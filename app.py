@@ -1,6 +1,7 @@
 import HPO_explorer
 import orphanet_db
 import re
+import requests
 from flask import Flask, jsonify, request, render_template
 from waitress import serve
 
@@ -44,6 +45,26 @@ def disorders():
         d[t].append((row[2], row[3], row[4]))
 
     return jsonify(d)
+
+
+@app.route("/biotag", methods=["POST"])
+def biotag():
+    data = request.get_json()
+    host = "https://phenotagger-dot-diagnosis-assistant-app.uw.r.appspot.com"
+
+    try:
+        response = requests.post(f"{host}/biotag", json=data)
+        terms = response.json()
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "PhenoTagger is not available."})
+
+    l = []
+    for term in terms:
+        l.append([term[2], hpo.get_termname(term[2])])
+
+    return jsonify(l)
 
 
 if __name__ == "__main__":
