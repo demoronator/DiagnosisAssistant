@@ -204,11 +204,9 @@ const onSubmitPhenoTagger = async (event) => {
         }
     }).catch(console.log)
         .then(response => response.json())
-        .then(data => {
-            for (let i = 0; i < data.length; i++) {
-                addSelectedSymptom(data[i][0], data[i][1])
-            }
-        })
+        .then(data => data.forEach((x) => checkDuplicate(x[0])
+            ? null
+            : addSelectedSymptom(x[0], x[1])))
 
     // Hide spinner
     document.getElementById('spinner').classList.add('hidden')
