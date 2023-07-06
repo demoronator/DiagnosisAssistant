@@ -21,6 +21,7 @@ form {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 700px;
   border: #eee solid 1px;
   padding: 5px;
   margin: 5px;
@@ -28,6 +29,7 @@ form {
 
 textarea {
   margin: 5px;
+  width: 100%;
   border: #eee solid 1px;
 }
 
@@ -49,6 +51,10 @@ textarea {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+#selected-container {
+  width: 700px;
 }
 
 #result-container {
@@ -90,7 +96,7 @@ tbody tr td {
 #search-input {
   box-sizing: border-box;
   padding: 20px;
-  width: 400px;
+  width: 700px;
   height: 40px;
   border: 1px solid #ccc;
   border-radius: 20px;
@@ -107,7 +113,7 @@ tbody tr td {
 #search-results {
   display: none; /* Hide the element initially */
   box-sizing: border-box;
-  width: 400px;
+  width: 700px;
   border: 1px solid #ccc;
   border-radius: 0 0 20px 20px;
   margin-top: 0;
