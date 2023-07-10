@@ -8,12 +8,12 @@ Top 10 Finalist for
 
 ## Abstract
 
-Diagnosing rare diseases presents significant challenges due to their unique and complex nature, often leading to delayed interventions and sub-optimal patient outcomes. However, the recent advancements in artificial intelligence and machine learning are revolutionizing healthcare, particularly the diagnostic process. This paper introduces "DiagnosisAssistant," a novel web-based application developed to assist medical professionals in accurately identifying and diagnosing rare diseases. The application leverages the Human Phenotype Ontology (HPO) and Orphanet databases, two critical resources, to provide a transformative approach to diagnosing rare diseases. The application analyzes and interprets data from these databases, enabling timely and precise diagnoses and paving the way for earlier interventions and improved patient outcomes. An example case study demonstrates the potential utility of the DiagnosisAssistant in facilitating complex diagnostic processes, especially for rare diseases. The application’s source code is openly accessible, inviting continuous improvement and adoption in diverse healthcare settings. By augmenting the diagnostic process, the DiagnosisAssistant has the potential to improve patient care and treatment outcomes significantly.
+Diagnosing rare diseases often presents significant challenges due to their complex, unique characteristics, leading to delays in appropriate interventions and impacting patient outcomes. Addressing this issue, we introduce the ‘DiagnosisAssistant,’ an innovative web-based application designed to assist medical professionals in efficiently and accurately diagnosing rare diseases. Integrating artificial intelligence and machine learning, DiagnosisAssistant facilitates the recognition of Human Phenotype Ontology (HPO) concepts in unstructured medical text. This integration made possible through the PhenoTagger tool, enables healthcare professionals to input patient symptoms and signs in a natural, descriptive manner, streamlining the diagnostic process. Furthermore, the application leverages the comprehensive HPO and Orphanet databases, crucial resources in rare diseases. Our performance testing on ten varied case reports of rare diseases has shown promising results, reinforcing the app’s potential in complex diagnostic processes. Despite its dependency on the completeness and accuracy of the HPO and Orphanet databases and its current inability to account for patient-specific factors such as age, medical history, and genetic data, the tool represents a significant step forward in rare disease diagnostics. With its source code openly accessible for continuous improvement, the DiagnosisAssistant holds immense potential for transforming the diagnosis of rare diseases, thus significantly enhancing patient care and treatment outcomes.
 
 
 ## Keywords
 
-Diagnosis, Rare diseases, Symptom, Sign, Pathognomonic sign
+Diagnosis Assistant, Rare Diseases, Artificial Intelligence, Named Entity Recognition, Big Data, Healthcare Informatics
 
 
 ## Full Text
@@ -29,14 +29,14 @@ The web app is available on [DiagnosisAssistant](https://diagnosis-assistant-app
 ## Screenshots
 
 <figure class="image">
-  <img width="700" alt="yellow skin" src="https://github.com/demoronator/Diagnosis-Assistant/assets/6217816/548c9fbc-faa5-4fc9-a909-284ce48bc47f">
+  <img width="534" alt="yellow skin" src="https://github.com/demoronator/Diagnosis-Assistant/assets/6217816/1d6643f0-3921-4580-8fd7-3b95ec3c607f">
   <br>
   <figcaption>User can list every symptom and sign which involve skin yellowing.</figcaption>
 </figure>
 <br><br>
 
 <figure class="image">
-  <img width="760" alt="searching" src="https://github.com/demoronator/Diagnosis-Assistant/assets/6217816/5cdfcc57-9d46-490e-a14b-83263f131dcc">
+  <img width="766" alt="searching" src="https://github.com/demoronator/Diagnosis-Assistant/assets/6217816/470534d4-ecaf-4128-8613-5bfb4a3ffd5c">
   <br>
   <figcaption>Result of searching with the symptoms and signs from a case report.</figcaption>
 </figure>
