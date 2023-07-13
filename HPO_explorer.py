@@ -2,13 +2,16 @@ import pronto
 from functools import lru_cache
 
 
-class HPO_explorer:
-    def __init__(self, ontology_file):
-        self.ont = pronto.ontology.Ontology(ontology_file)
-        self.preprocessed_terms = self._preprocess_terms()
+# Constants
+MIN_INPUT_LENGTH = 3
+DEFAULT_ONTOLOGY_FILE = "hp.obo"
 
-    def _preprocess_terms(self):
-        preprocessed_terms = []
+
+class HPO_explorer:
+    preprocessed_terms: list
+
+    def __init__(self, ontology_file) -> None:
+        self.ont = pronto.ontology.Ontology(ontology_file)
         for term in self.ont.terms():
             full_desc = (
                 str(term.name).lower()
@@ -17,20 +20,21 @@ class HPO_explorer:
                 + " "
                 + str(term.definition).lower()
             )
-            preprocessed_terms.append((term.id, term.name, full_desc))
-        return preprocessed_terms
+            self.preprocessed_terms.append((term.id, term.name, full_desc))
 
     @lru_cache(maxsize=1024)
-    def find_terms(self, input, limit=None) -> list:
-        if input != str.strip(input):
-            return self.find_terms(str.strip(input), limit=limit)
+    def find_terms(self, to_search: str, limit=None) -> list:
+        # Strip the input of leading and trailing whitespace
+        stripped = str.strip(to_search)
+        if to_search != stripped:
+            return self.find_terms(stripped, limit=limit)
 
-        if not input or len(input) < 3:
+        if not to_search or len(to_search) < MIN_INPUT_LENGTH:
             return []
 
         primary = []
         secondary = []
-        words = input.lower().split()
+        words = to_search.lower().split()
         for term_id, term_name, full_desc in self.preprocessed_terms:
             if limit and limit <= len(primary):
                 return (primary + secondary)[:limit]
@@ -81,41 +85,9 @@ class HPO_explorer:
         name = str(self.ont[term_id].name)
         return name
 
-    def create_json_file(self):
-        import json
-
-        with open("hp.json", "w") as f:
-            # The JSON file should contain only HPO_ID, name, definition, and synonyms
-            d = {}
-            for term in self.ont.terms():
-                d[term.id] = {
-                    "name": term.name,
-                    "definition": str(term.definition),
-                    "synonyms": [syn.description for syn in term.synonyms],
-                }
-            json.dump(d, f, indent=2)
-
-    def create_jsonl_file(self):
-        with open("hp.jsonl", "w") as f:
-            l = []
-            t = list(self.ont.terms())[1:]  # Skip the root term
-            for term in t:
-                l.append(f'{{"prompt": "{term.name}", "completion": "{term.id}"}}')
-                # l.append(
-                #     f'{{"prompt": "{term.definition}", "completion": "{term.id}"}}'
-                # )
-                # for syn in term.synonyms:
-                #     l.append(
-                #         f'{{"prompt": "{syn.description}", "completion": "{term.id}"}}'
-                #     )
-            f.write("\n".join(l))
-
 
 if __name__ == "__main__":
-    hpo = HPO_explorer("hp.obo")
-
-    hpo.create_json_file()
-    hpo.create_jsonl_file()
+    hpo = HPO_explorer(DEFAULT_ONTOLOGY_FILE)
 
     # Test the function with an example term
     print(hpo.find_terms("Weight", limit=15), "\n")
