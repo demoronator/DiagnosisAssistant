@@ -71,6 +71,10 @@ class HPO_explorer:
             return []
 
         term: pronto.term.Term = self.ont[term_id]
+        if not isinstance(term, pronto.term.Term):
+            print(f"Term {term_id} is not a valid term")
+            return []
+
         superterms = []
         results = term.superclasses(distance=distance, with_self=False)
         for superterm in results:
