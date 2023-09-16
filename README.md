@@ -23,7 +23,7 @@ The full text of the paper is available on [Link](https://drive.google.com/file/
 
 ## Web App
 
-The web app is available on [DiagnosisAssistant](https://diagnosis-assistant-app.uw.r.appspot.com/)
+The web app is available for test upon request. Please send me email.
 
 
 ## Screenshots
